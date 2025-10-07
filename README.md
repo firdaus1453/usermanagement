@@ -1,12 +1,11 @@
 # 🚀 User Management Application
 
-> Modern user management system built with Laravel 12, Filament 4, PostgreSQL, and Redis.
+> Modern user management system built with Laravel 12, Filament 4, and PostgreSQL.
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php)](https://php.net)
 [![Filament](https://img.shields.io/badge/Filament-4.x-FDAE4B)](https://filamentphp.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://postgresql.org)
-[![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis)](https://redis.io)
 
 ## 📋 Overview
 
@@ -18,7 +17,7 @@ Aplikasi **User Management** adalah sistem manajemen pengguna berbasis web yang 
 
     -   Login dengan rate limiting (anti brute-force)
     -   Role-based access control (Superadmin, Admin, Operator, Validator)
-    -   Session management dengan Redis
+    -   Session management dengan database
     -   Hanya user aktif yang dapat login
 
 -   ✅ **User Management (CRUD)**
@@ -33,7 +32,6 @@ Aplikasi **User Management** adalah sistem manajemen pengguna berbasis web yang 
 
     -   Statistics user per role (Superadmin, Admin, Operator, Validator)
     -   Real-time data dengan auto-refresh
-    -   Recent users widget
 
 -   ✅ **Security Features**
 
@@ -57,7 +55,7 @@ Aplikasi **User Management** adalah sistem manajemen pengguna berbasis web yang 
     -   Health endpoint (`/health`)
     -   JSON logging dengan context
     -   Request ID tracking
-    -   Database & cache status monitoring
+    -   Database status monitoring
 
 ---
 
@@ -68,12 +66,12 @@ Aplikasi **User Management** adalah sistem manajemen pengguna berbasis web yang 
 | **Framework**     | Laravel 12.x                                             |
 | **Admin Panel**   | Filament 4.x (TALL: Tailwind, Alpine, Livewire, Laravel) |
 | **Database**      | PostgreSQL 16                                            |
-| **Cache/Session** | Redis 7                                                  |
+| **Cache/Session** | Database (PostgreSQL)                                    |
 | **PHP**           | 8.2 / 8.3 / 8.4                                          |
 | **Frontend**      | Blade, Livewire 3, Alpine.js, Tailwind CSS               |
 | **Container**     | Docker Compose                                           |
-| **Testing**       | Pest                                                     |
-| **Code Quality**  | Laravel Pint, Larastan                                   |
+| **Testing**       | PHPUnit                                                  |
+| **Code Quality**  | Laravel Pint                                             |
 
 ---
 
@@ -99,7 +97,7 @@ cd usermanagement
 ### Step 2: Start Docker Services
 
 ```bash
-# Start PostgreSQL, Redis, dan DBGate
+# Start PostgreSQL dan DBGate
 docker-compose up -d
 
 # Verify services are running
@@ -111,7 +109,6 @@ Expected output:
 ```
 NAME                        STATUS    PORTS
 usermanagement_postgres     Up        0.0.0.0:5432->5432/tcp
-usermanagement_redis        Up        0.0.0.0:6379->6379/tcp
 usermanagement_dbgate       Up        0.0.0.0:3010->3000/tcp
 ```
 
@@ -150,12 +147,8 @@ DB_DATABASE=laravel_usermanagement
 DB_USERNAME=laravel
 DB_PASSWORD=secret
 
-CACHE_DRIVER=redis
-SESSION_DRIVER=redis
-QUEUE_CONNECTION=redis
-
-REDIS_HOST=127.0.0.1
-REDIS_PORT=6379
+CACHE_STORE=database
+SESSION_DRIVER=database
 ```
 
 ### Step 5: Database Setup
@@ -220,7 +213,6 @@ Setelah seeding, Anda dapat login dengan akun berikut:
 Setelah login, Anda akan melihat:
 
 -   **Stats Cards**: Jumlah user per role (Superadmin, Admin, Operator, Validator)
--   **Recent Users**: 5 user terbaru yang dibuat
 
 ### 3. User Management
 
@@ -306,27 +298,12 @@ Setelah login, Anda akan melihat:
 # Using Artisan
 php artisan test
 
-# Using Pest
-./vendor/bin/pest
+# Using PHPUnit
+./vendor/bin/phpunit
 
 # With coverage
-./vendor/bin/pest --coverage
+./vendor/bin/phpunit --coverage-text
 ```
-
-### Run Specific Test
-
-```bash
-./vendor/bin/pest --filter UserManagementTest
-```
-
-### Test Coverage
-
--   ✅ User authentication (active/inactive)
--   ✅ Panel access control
--   ✅ CRUD operations
--   ✅ Policy authorization
--   ✅ Rate limiting
--   ✅ Health endpoint
 
 ---
 
@@ -394,8 +371,7 @@ Response:
     "checks": {
         "app": "ok",
         "time": "2025-02-24T10:30:00+00:00",
-        "database": "ok",
-        "cache": "ok"
+        "database": "ok"
     }
 }
 ```
@@ -474,20 +450,6 @@ docker-compose exec db psql -U laravel -d laravel_usermanagement
 docker-compose exec db psql -U laravel -d laravel_usermanagement -c "SELECT * FROM users;"
 ```
 
-### Redis CLI
-
-```bash
-# Access Redis CLI
-docker-compose exec redis redis-cli
-
-# Test connection
-docker-compose exec redis redis-cli ping
-# Expected: PONG
-
-# Monitor commands
-docker-compose exec redis redis-cli MONITOR
-```
-
 ---
 
 ## 🧹 Maintenance
@@ -523,13 +485,6 @@ php artisan view:cache
 ./vendor/bin/pint --test
 ```
 
-### Static Analysis
-
-```bash
-# Run Larastan
-./vendor/bin/phpstan analyse
-```
-
 ### Fresh Migration
 
 ```bash
@@ -546,35 +501,45 @@ usermanagement/
 ├── app/
 │   ├── Filament/
 │   │   ├── Resources/
-│   │   │   └── UserResource.php
+│   │   │   └── Users/
+│   │   │       ├── Pages/
+│   │   │       │   ├── CreateUser.php
+│   │   │       │   ├── EditUser.php
+│   │   │       │   └── ListUsers.php
+│   │   │       ├── Schemas/
+│   │   │       │   └── UserForm.php
+│   │   │       ├── Tables/
+│   │   │       │   └── UsersTable.php
+│   │   │       └── UserResource.php
 │   │   └── Widgets/
-│   │       ├── UsersByRoleOverview.php
-│   │       └── RecentUsers.php
+│   │       └── UsersByRoleOverview.php
 │   ├── Http/
-│   │   ├── Middleware/
-│   │   │   ├── RequestIdMiddleware.php
-│   │   │   └── SecurityHeadersMiddleware.php
-│   │   └── Kernel.php
+│   │   └── Middleware/
+│   │       ├── RequestId.php
+│   │       └── SecurityHeaders.php
 │   ├── Models/
 │   │   └── User.php
 │   ├── Policies/
 │   │   └── UserPolicy.php
 │   └── Providers/
 │       ├── AppServiceProvider.php
-│       ├── AuthServiceProvider.php
 │       └── Filament/
 │           └── AdminPanelProvider.php
 ├── database/
 │   ├── migrations/
-│   │   └── xxxx_create_users_table.php
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   └── 0001_01_01_000002_create_jobs_table.php
 │   └── seeders/
 │       ├── DatabaseSeeder.php
 │       └── UserSeeder.php
 ├── routes/
 │   └── web.php
 ├── tests/
-│   └── Feature/
-│       └── UserManagementTest.php
+│   ├── Feature/
+│   │   └── ExampleTest.php
+│   └── Unit/
+│       └── ExampleTest.php
 ├── docker-compose.yml
 ├── .env.example
 ├── prd.md
@@ -592,12 +557,9 @@ usermanagement/
 -   [ ] Generate new `APP_KEY`
 -   [ ] Update database credentials
 -   [ ] Use managed PostgreSQL (AWS RDS, DigitalOcean, etc)
--   [ ] Use managed Redis (AWS ElastiCache, etc)
 -   [ ] Enable HTTPS (SSL certificate)
 -   [ ] Set `SESSION_SECURE_COOKIE=true`
 -   [ ] Configure proper CORS
--   [ ] Set up queue workers
--   [ ] Set up scheduled tasks (cron)
 -   [ ] Configure logging (external service)
 -   [ ] Set up monitoring (Sentry, Bugsnag, etc)
 -   [ ] Configure backups
@@ -638,19 +600,6 @@ docker-compose restart db
 
 # Test connection
 docker-compose exec db psql -U laravel -d laravel_usermanagement -c "SELECT 1;"
-```
-
-### Redis Connection Error
-
-```bash
-# Check if Redis is running
-docker-compose ps redis
-
-# Test connection
-docker-compose exec redis redis-cli ping
-
-# Restart service
-docker-compose restart redis
 ```
 
 ### Filament Login Issues
@@ -695,7 +644,6 @@ ports:
 -   [Laravel 12 Documentation](https://laravel.com/docs/12.x)
 -   [Filament 4 Documentation](https://filamentphp.com/docs)
 -   [PostgreSQL Documentation](https://www.postgresql.org/docs/)
--   [Redis Documentation](https://redis.io/docs/)
 -   [Docker Compose Documentation](https://docs.docker.com/compose/)
 -   [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 
@@ -754,7 +702,6 @@ This project is licensed under the MIT License.
 -   [Laravel](https://laravel.com) - The PHP Framework for Web Artisans
 -   [Filament](https://filamentphp.com) - Accelerated Laravel Development
 -   [PostgreSQL](https://www.postgresql.org) - The World's Most Advanced Open Source Relational Database
--   [Redis](https://redis.io) - The Open Source, In-Memory Data Store
 
 ---
 
@@ -768,4 +715,4 @@ Jika ada pertanyaan atau issue:
 
 ---
 
-**Built with ❤️ using Laravel 12, Filament 4, PostgreSQL, and Redis**
+**Built with ❤️ using Laravel 12, Filament 4, and PostgreSQL**
