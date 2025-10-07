@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: usermanagement_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: laravel_usermanagement
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - usermanagement_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U laravel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # DBGate - Database Management UI
+  dbgate:
+    image: dbgate/dbgate:latest
+    container_name: usermanagement_dbgate
+    restart: unless-stopped
+    ports:
+      - "3010:3000"
+    environment:
+      CONNECTIONS: postgres
+      LABEL_postgres: PostgreSQL
+      SERVER_postgres: db
+      USER_postgres: laravel
+      PASSWORD_postgres: secret
+      PORT_postgres: 5432
+      DATABASE_postgres: laravel_usermanagement
+      ENGINE_postgres: postgres@dbgate-plugin-postgres
+    depends_on:
+      - db
+    networks:
+      - usermanagement_network
+    volumes:
+      - dbgate_data:/root/.dbgate
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: usermanagement_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - usermanagement_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  dbgate_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  usermanagement_network:
+    driver: bridge

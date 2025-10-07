@@ -1,0 +1,20 @@
+SOAL PRAKTEK
+Sebagai seorang programmer, anda diminta membuat sebuah aplikasi berbasis web untuk manajemen user. Berikut ini petunjuk untuk membuat aplikasi tersebut:
+1. Bebas menggunakan bahasa dan framework apapun;
+2. Dilarang menggunakan library user management siap pakai seperti Laravel Jetstream,
+Myth:Auth dan lainnya;
+3. Aplikasi manajemen user minimal terdiri dari halaman login dan halaman CRUD.
+4. Fitur-fitur lainnya dibebaskan untuk ditambahkan berdasarkan kreatifitas masing-masing;
+5. User interface harus responsif untuk lebar ponsel (390px), tab (768px) dan laptop
+(1280px). Bebas menggunakan template dan framework CSS apapun;
+6. Gunakan struktur tabel dibawah ini. Anda diperbolehkan menambahkan kolom baru (untuk keperluan fitur tambahan mengacu pada poin 4) namun dilarang memodifikasi struktur
+tabel yang diberikan.
+CREATE TABLE `users` (
+`user_id` int(10) NOT NULL AUTO_INCREMENT,
+`email` varchar(255) DEFAULT NULL,
+`password_hash` varchar(255) DEFAULT NULL,
+`role` enum('superadmin','admin','operator','validator') DEFAULT NULL, `is_active` tinyint(1) DEFAULT NULL,
+`created_at` datetime DEFAULT NULL,
+`updated_at` datetime DEFAULT NULL,
+PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
