@@ -3,7 +3,7 @@ version: "3.8"
 services:
   # PostgreSQL Database
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: usermanagement_postgres
     restart: unless-stopped
     ports:
@@ -45,30 +45,10 @@ services:
     volumes:
       - dbgate_data:/root/.dbgate
 
-  # Redis
-  redis:
-    image: redis:7-alpine
-    container_name: usermanagement_redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
-    volumes:
-      - redis_data:/data
-    networks:
-      - usermanagement_network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
 volumes:
   postgres_data:
     driver: local
   dbgate_data:
-    driver: local
-  redis_data:
     driver: local
 
 networks:
