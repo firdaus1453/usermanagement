@@ -51,7 +51,7 @@ class User extends Authenticatable implements FilamentUser
      * Override getAuthPassword untuk menggunakan password_hash
      *
      * Laravel by default menggunakan kolom 'password',
-     * tapi kita menggunakan 'password_hash' sesuai soal.
+     * tapi kita menggunakan 'password_hash'.
      */
     public function getAuthPassword(): string
     {
@@ -97,7 +97,6 @@ class User extends Authenticatable implements FilamentUser
      * Filament Panel Access Control
      *
      * Hanya user aktif yang bisa akses panel admin
-     * Sesuai requirements: Login hanya untuk user aktif
      */
     public function canAccessPanel(Panel $panel): bool
     {
