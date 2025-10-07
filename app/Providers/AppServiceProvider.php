@@ -31,18 +31,13 @@ class AppServiceProvider extends ServiceProvider
     protected function configureRateLimiting(): void
     {
         // Rate limiting for login attempts
-        // Based on email + session ID to avoid false blocks on shared IPs
+        // Based on email + session ID
         RateLimiter::for('web-login', function (Request $request) {
             $email = mb_strtolower(trim((string) $request->input('email', 'unknown')));
             $sessId = $request->session()->getId() ?: 'no-session';
 
             // 5 attempts per minute per (email + session)
             return Limit::perMinute(5)->by("web-login:{$email}|{$sessId}");
-        });
-
-        // General API rate limiting (if needed in future)
-        RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->user_id ?: $request->ip());
         });
     }
 }

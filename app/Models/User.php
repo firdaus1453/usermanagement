@@ -14,7 +14,7 @@ class User extends Authenticatable implements FilamentUser
     use HasFactory, Notifiable;
 
     /**
-     * PENTING: Sesuai soal, primary key adalah user_id
+     * PENTING: primary key adalah user_id
      */
     protected $primaryKey = 'user_id';
 
