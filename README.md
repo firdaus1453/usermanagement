@@ -1,10 +1,10 @@
 # 🚀 User Management Application
 
-> Modern user management system built with Laravel 12, Filament 3, PostgreSQL, and Redis.
+> Modern user management system built with Laravel 12, Filament 4, PostgreSQL, and Redis.
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel)](https://laravel.com)
 [![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?logo=php)](https://php.net)
-[![Filament](https://img.shields.io/badge/Filament-3.x-FDAE4B)](https://filamentphp.com)
+[![Filament](https://img.shields.io/badge/Filament-4.x-FDAE4B)](https://filamentphp.com)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://postgresql.org)
 [![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis)](https://redis.io)
 
@@ -66,7 +66,7 @@ Aplikasi **User Management** adalah sistem manajemen pengguna berbasis web yang 
 | Layer             | Technology                                               |
 | ----------------- | -------------------------------------------------------- |
 | **Framework**     | Laravel 12.x                                             |
-| **Admin Panel**   | Filament 3.x (TALL: Tailwind, Alpine, Livewire, Laravel) |
+| **Admin Panel**   | Filament 4.x (TALL: Tailwind, Alpine, Livewire, Laravel) |
 | **Database**      | PostgreSQL 16                                            |
 | **Cache/Session** | Redis 7                                                  |
 | **PHP**           | 8.2 / 8.3 / 8.4                                          |
@@ -693,7 +693,7 @@ ports:
 ## 📚 Documentation
 
 -   [Laravel 12 Documentation](https://laravel.com/docs/12.x)
--   [Filament 3 Documentation](https://filamentphp.com/docs/3.x)
+-   [Filament 4 Documentation](https://filamentphp.com/docs)
 -   [PostgreSQL Documentation](https://www.postgresql.org/docs/)
 -   [Redis Documentation](https://redis.io/docs/)
 -   [Docker Compose Documentation](https://docs.docker.com/compose/)
@@ -768,4 +768,4 @@ Jika ada pertanyaan atau issue:
 
 ---
 
-**Built with ❤️ using Laravel 12, Filament 3, PostgreSQL, and Redis**
+**Built with ❤️ using Laravel 12, Filament 4, PostgreSQL, and Redis**
